@@ -1,48 +1,39 @@
-FleetTrack AI - Transport Fleet Logistics and OCR Efficiency System
-This project solves a real-world logistics problem: auditing fuel expenses in transport fleets. Instead of forcing administrators to manually check hundreds of paper receipts, this platform uses an AI-driven OCR pipeline to extract invoice data, run automated mathematical validation checks, and instantly surface anomalies on a real-time dashboard.
+# Infinity Park Airport Parking and Concierge Platform
 
-This repository hosts the React and TypeScript frontend, designed for type-safety, fluid user experience, and real-time data streaming.
+Infinity Park is an enterprise-grade software ecosystem designed to streamline and scale valet airport parking and luxury concierge operations. Initially optimized for Amsterdam Airport Schiphol (AMS), the platform's modular architecture is built for rapid deployment and multi-tenant expansion across major European airports. The entire ecosystem utilizes a single, centralized API that orchestrates three interconnected products tailored for clients, administrators, and field operators.
 
-Tech Stack
-Frontend: React 18, TypeScript, Tailwind CSS
+The project is structured around a central API that serves a public web application, an administrative dashboard, and a specialized mobile application for field operators. This centralized backend architecture ensures data consistency, real-time synchronization, and high availability across all operational touchpoints.
 
-State Management and Data Fetching: Zustand / TanStack Query (React Query)
+## Public Web Application
 
-Charts: Recharts (optimized for responsive rendering)
+The public web application is an SEO-optimized, highly responsive web portal designed to maximize conversion rates and deliver an effortless booking experience for the end consumer. It features a dynamic multi-step checkout flow that supports service packages such as Basic, Travel Clean, VIP Return, and Love Arrival, along with flight selection and add-on scheduling.
 
-Backend (For reference): Node.js/NestJS or Python/FastAPI + PostgreSQL
+The application is built with Progressive Web App (PWA) capabilities, making it fully installable on mobile devices with offline-ready landing pages. It includes native multi-language support for English, Dutch, and Spanish, with an easily extensible localization framework. For payments, it integrates securely with Mollie to support European payment standards, including iDEAL, credit/debit cards, and mobile wallets. Customers also have access to a secure personal dashboard where they can manage vehicle profiles, view booking history, and download automated VAT invoices.
 
-Architecture and How It Works
-The application handles a decoupled, asynchronous flow to keep the user experience seamless:
+## Administrative Dashboard
 
-The Upload: A driver takes a picture of a gas station receipt from their phone. The TypeScript frontend validates the file type/size and uploads it.
+The administrative dashboard serves as the operational brain of Infinity Park, enabling real-time command and control over daily airport logistics and business administration. It features a comprehensive booking and dispatch control interface where operators can manually or automatically assign reservations to available drivers based on workload and location.
 
-Background Processing: To avoid locking up the UI, the backend offloads the image processing to a task queue. The frontend shifts into a processing state without freezing.
+The dashboard includes a no-code catalog management tool that allows administrators to update pricing tiers, service options, terminal configurations, and seasonal rates instantly without modifying code. Real-time flight tracking is integrated directly into the system, allowing the operational team to monitor delays and automatically adjust valet pickup and drop-off times. Additionally, the admin panel handles automated transactional flows, generating PDF invoices instantly upon booking completion, and provides business intelligence metrics to track revenue, average order value, and parking bay occupancy rates.
 
-AI/OCR Extraction: The AI model parses the image to extract Date, Liters, Total Cost, and Vendor Name.
+## Operator Mobile Application
 
-The Validation Engine: The core business logic kicks in. The system calculates vehicle efficiency (km/liter) and runs an automated math audit.
+The operator mobile application is a rugged, offline-first mobile app designed specifically for valets, drivers, and detailing personnel working on the ground. It provides each operator with a personalized daily task sheet updated in real-time based on dispatcher assignments.
 
-Real-Time Sync: Once processed, the data is pushed to the Admin Dashboard, dynamically updating the charts.
+To ensure quality control and liability protection, the app features a digital vehicle inspection checklist that guides drivers through intake and release protocols. This includes capturing time-stamped, multi-angle photos of the vehicle to document its condition, as well as logging key telemetry data such as mileage, fuel levels, and specific parking bay coordinates. To withstand airport environments with limited connectivity, the application uses local database storage, enabling full offline functionality and automatic data synchronization once a network connection is re-established.
 
-Engineering Challenges and Solved Problems
-When building a project like this, the real world throws edge cases at you. Here is how I tackled them:
+## Third-Party Integrations
 
-1. The Hallucinating OCR Problem (Validation Engine)
-OCR engines are not perfect. They can misread numbers or misplace decimal points. To catch this, I implemented a strict mathematical cross-check algorithm.
+The platform relies on a best-of-breed integration architecture to automate notifications, tracking, and compliance. Payments are processed through the Mollie API to ensure secure, multi-currency transactions across Europe. Real-time flight status and terminal schedules are synchronized using the AeroDataBox API.
 
-The system checks if Liters multiplied by Cost per Liter equals the Total Cost, allowing for minor rounding tolerances. It also cross-checks if the extracted liters exceed the truck's maximum tank capacity.
+Automated client communications, such as booking confirmations and driver arrival alerts, are dispatched via the WhatsApp Business API. High-resolution vehicle inspection photos are stored securely using cloud-based object storage services like AWS S3 or Cloudflare R2. Transactional emails, including automated PDF invoice delivery and system notifications, are handled by Resend or Postmark.
 
-If the math does not add up, the record is not rejected; instead, TypeScript types map it to a strict AuditStatus.Discrepancy state, flagging it on the admin panel for manual review.
+## Getting Started
 
-2. Strict Type Safety for Unpredictable AI Payloads
-AI and OCR responses can sometimes return partial or malformed data. Using TypeScript, I built rigid interfaces and type guards to handle every possible state (Pending, Approved, Discrepancy) without causing the UI to crash with undefined errors.
+To set up the project locally, ensure you have Node.js version 18 or higher, Docker, and PostgreSQL version 15 or higher installed on your system.
 
-Database Schema Design (Relational SQL)
-To understand how the data interacts, here is the relational model supporting the frontend:
+First, clone the repository to your local machine and navigate into the project directory. Run the package manager installation command to retrieve all necessary dependencies. Next, copy the example environment file to create your own configuration file, and populate it with your specific API keys for Mollie, AeroDataBox, and your chosen cloud storage provider. Finally, execute the development database migrations and start the local development server to run the API and client applications.
 
-Vehicles: id, plate_number, model, tank_capacity_liters, current_odometer_km.
+## License
 
-Drivers: id, name, national_id, assigned_vehicle_id.
-
-FuelLogs: id, vehicle_id, driver_id, date, liters_loaded, total_cost, odometer_at_registration_km, receipt_image_url, audit_status (Approved / Discrepancy / Pending).
+This project is licensed under the MIT License. Please refer to the LICENSE file in the repository root for more details.
