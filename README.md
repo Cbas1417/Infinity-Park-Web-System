@@ -16,12 +16,6 @@ The administrative dashboard serves as the operational brain of Infinity Park, e
 
 The dashboard includes a no-code catalog management tool that allows administrators to update pricing tiers, service options, terminal configurations, and seasonal rates instantly without modifying code. Real-time flight tracking is integrated directly into the system, allowing the operational team to monitor delays and automatically adjust valet pickup and drop-off times. Additionally, the admin panel handles automated transactional flows, generating PDF invoices instantly upon booking completion, and provides business intelligence metrics to track revenue, average order value, and parking bay occupancy rates.
 
-## Operator Mobile Application
-
-The operator mobile application is a rugged, offline-first mobile app designed specifically for valets, drivers, and detailing personnel working on the ground. It provides each operator with a personalized daily task sheet updated in real-time based on dispatcher assignments.
-
-To ensure quality control and liability protection, the app features a digital vehicle inspection checklist that guides drivers through intake and release protocols. This includes capturing time-stamped, multi-angle photos of the vehicle to document its condition, as well as logging key telemetry data such as mileage, fuel levels, and specific parking bay coordinates. To withstand airport environments with limited connectivity, the application uses local database storage, enabling full offline functionality and automatic data synchronization once a network connection is re-established.
-
 ## Third-Party Integrations
 
 The platform relies on a best-of-breed integration architecture to automate notifications, tracking, and compliance. Payments are processed through the Mollie API to ensure secure, multi-currency transactions across Europe. Real-time flight status and terminal schedules are synchronized using the AeroDataBox API.
