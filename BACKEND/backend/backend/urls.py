@@ -11,6 +11,7 @@ urlpatterns = [
     path('Service', include('Service.urls')),
     path('User', include('User.urls')),
     path('Vehicle', include('Vehicle.urls')),
+    path('Assignments', include('Assignments.urls')),
 ]
 
 if settings.DEBUG:

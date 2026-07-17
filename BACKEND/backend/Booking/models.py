@@ -10,7 +10,7 @@ class Booking(models.Model):
     datetime_checkin = models.DateTimeField(max_length=100)
     datetime_checkout = models.DateTimeField(max_length=100)
     associated_flight = models.CharField(blank=True, null=True, max_length=200)
-    status = models.CharField(blank=True, null=True, max_length=200)
+    status_booking = models.CharField(blank=True, null=True, max_length=200)
     id_airport = models.ForeignKey(Airport, on_delete=models.CASCADE)
     id_user = models.ForeignKey(User, on_delete=models.CASCADE)
     id_vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
