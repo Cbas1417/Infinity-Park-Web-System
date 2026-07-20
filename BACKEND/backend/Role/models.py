@@ -2,12 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Role(models.Model):
-    id_role = models.AutoField(primary_key=True)
-    name_role = models.CharField(max_length=200)
-    description_role = models.TextField(blank=True, null=True)
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name_role
+        return self.name
     
     class Meta:
         db_table='role'
