@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand tokens — Infinity Park
+     Carbon black + signal amber (marca/texto) + signal blue (acciones) */
+  --color-carbon: #16181a;
+  --color-carbon-soft: #2a2d30;
+  --color-amber: #c6a751;
+  --color-amber-deep: #d99e00;
+  --color-amber-bright: #e8c878;
+  --color-signal: #c6a751;
+  --color-signal-light: #c6a751;
+  --color-stone: #6b6d70;
+  --color-stone-light: #ffffff;
+  --color-paper: #ffffff;
+  --color-mist: #f4f3f1;
+  --color-blueprint: #d8dce0;
+
+  --background: var(--color-paper);
+  --foreground: var(--color-carbon);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-carbon: var(--color-carbon);
+  --color-carbon-soft: var(--color-carbon-soft);
+  --color-amber: var(--color-amber);
+  --color-amber-deep: var(--color-amber-deep);
+  --color-amber-bright: var(--color-amber-bright);
+  --color-signal: var(--color-signal);
+  --color-signal-light: var(--color-signal-light);
+  --color-stone: var(--color-stone);
+  --color-stone-light: var(--color-stone-light);
+  --color-paper: var(--color-paper);
+  --color-mist: var(--color-mist);
+  --color-blueprint: var(--color-blueprint);
+
+  /*
+   * NOTA: sin acceso a fonts.googleapis.com en este entorno de desarrollo,
+   * se usan pilas de fuentes de sistema como fallback. En producción,
+   * reactivar next/font/google con Roboto Mono (display) + Inter (sans).
+   * Roboto Mono es la fuente real del wordmark "INFINITY PARK" del
+   * diseño original (clase u-font-roboto-mono de Nicepage).
+   */
+  --font-display: "Roboto Mono", "Courier New", monospace;
+  --font-sans: "Inter", -apple-system, "Segoe UI", Roboto, system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.container-page {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Visible keyboard focus */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+}
