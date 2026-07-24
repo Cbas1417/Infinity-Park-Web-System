@@ -7,7 +7,7 @@ class Service(models.Model):
     description_service = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.id_service
+        return str(self.id_service)
     
     class Meta:
         db_table='service'

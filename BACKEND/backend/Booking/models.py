@@ -17,7 +17,7 @@ class Booking(models.Model):
 
 
     def __str__(self):
-        return self.id_booking
+        return str(self.id_booking)
     
     class Meta:
         db_table='booking'
@@ -32,7 +32,7 @@ class BookingServices(models.Model):
 
 
     def __str__(self):
-        return self.id_bookingservices
+        return str(self.id_bookingservices)
     
     class Meta:
         db_table='booking-service'

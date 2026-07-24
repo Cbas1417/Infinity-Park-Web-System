@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from Booking.models import Booking
-from User.models import User
+
 
 class Assignment(models.Model):
     id_assignment = models.AutoField(primary_key=True)
@@ -12,7 +12,7 @@ class Assignment(models.Model):
     
 
     def __str__(self):
-        return self.id_assignment
+        return str(self.id_assignment)
     
     class Meta:
         db_table='assignment'

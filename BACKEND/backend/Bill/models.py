@@ -12,7 +12,7 @@ class Bill(models.Model):
 
 
     def __str__(self):
-        return self.id_bill
+        return str(self.id_bill)
     
     class Meta:
         db_table='bill'
