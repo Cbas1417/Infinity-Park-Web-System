@@ -1,21 +1,33 @@
-<<<<<<< HEAD
-# React + Vite
+# Infinity Park Airport Parking and Concierge Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Infinity Park is an enterprise-grade software ecosystem designed to streamline and scale valet airport parking and luxury concierge operations. Initially optimized for Amsterdam Airport Schiphol (AMS), the platform's modular architecture is built for rapid deployment and multi-tenant expansion across major European airports. The entire ecosystem utilizes a single, centralized API that orchestrates three interconnected products tailored for clients, administrators, and field operators.
 
-Currently, two official plugins are available:
+The project is structured around a central API that serves a public web application, an administrative dashboard, and a specialized mobile application for field operators. This centralized backend architecture ensures data consistency, real-time synchronization, and high availability across all operational touchpoints.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Public Web Application
 
-## React Compiler
+The public web application is an SEO-optimized, highly responsive web portal designed to maximize conversion rates and deliver an effortless booking experience for the end consumer. It features a dynamic multi-step checkout flow that supports service packages such as Basic, Travel Clean, VIP Return, and Love Arrival, along with flight selection and add-on scheduling.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The application is built with Progressive Web App (PWA) capabilities, making it fully installable on mobile devices with offline-ready landing pages. It includes native multi-language support for English, Dutch, and Spanish, with an easily extensible localization framework. For payments, it integrates securely with Mollie to support European payment standards, including iDEAL, credit/debit cards, and mobile wallets. Customers also have access to a secure personal dashboard where they can manage vehicle profiles, view booking history, and download automated VAT invoices.
 
-## Expanding the Oxlint configuration
+## Administrative Dashboard
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
-=======
-# Infinity-park
-Sistema de reservas, pagos y gestión operativa para parking aeroportuario premium (Schiphol) | Booking, payments and operations system for premium airport parking (Schiphol)
->>>>>>> 6ac445b7d9b23ecb4c5c3f6d2453afb391402e3c
+The administrative dashboard serves as the operational brain of Infinity Park, enabling real-time command and control over daily airport logistics and business administration. It features a comprehensive booking and dispatch control interface where operators can manually or automatically assign reservations to available drivers based on workload and location.
+
+The dashboard includes a no-code catalog management tool that allows administrators to update pricing tiers, service options, terminal configurations, and seasonal rates instantly without modifying code. Real-time flight tracking is integrated directly into the system, allowing the operational team to monitor delays and automatically adjust valet pickup and drop-off times. Additionally, the admin panel handles automated transactional flows, generating PDF invoices instantly upon booking completion, and provides business intelligence metrics to track revenue, average order value, and parking bay occupancy rates.
+
+## Third-Party Integrations
+
+The platform relies on a best-of-breed integration architecture to automate notifications, tracking, and compliance. Payments are processed through the Mollie API to ensure secure, multi-currency transactions across Europe. Real-time flight status and terminal schedules are synchronized using the AeroDataBox API.
+
+Automated client communications, such as booking confirmations and driver arrival alerts, are dispatched via the WhatsApp Business API. High-resolution vehicle inspection photos are stored securely using cloud-based object storage services like AWS S3 or Cloudflare R2. Transactional emails, including automated PDF invoice delivery and system notifications, are handled by Resend or Postmark.
+
+## Getting Started
+
+To set up the project locally, ensure you have Node.js version 18 or higher, Docker, and PostgreSQL version 15 or higher installed on your system.
+
+First, clone the repository to your local machine and navigate into the project directory. Run the package manager installation command to retrieve all necessary dependencies. Next, copy the example environment file to create your own configuration file, and populate it with your specific API keys for Mollie, AeroDataBox, and your chosen cloud storage provider. Finally, execute the development database migrations and start the local development server to run the API and client applications.
+
+## License
+
+This project is licensed under the MIT License. Please refer to the LICENSE file in the repository root for more details.
