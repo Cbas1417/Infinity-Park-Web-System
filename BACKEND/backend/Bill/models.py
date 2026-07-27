@@ -4,7 +4,7 @@ from Booking.models import Booking
 
 
 class Bill(models.Model):
-    id_bill = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     service_provider = models.CharField(blank=True, null=True, max_length=200)
     pay_status = models.CharField(blank=True, null=True, max_length=200)
     id_booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
@@ -12,7 +12,7 @@ class Bill(models.Model):
 
 
     def __str__(self):
-        return str(self.id_bill)
+        return str(self.id)
     
     class Meta:
         db_table='bill'

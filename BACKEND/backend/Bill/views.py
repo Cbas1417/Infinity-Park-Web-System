@@ -38,7 +38,7 @@ class GetPost(APIView):
     permission_classes = [AllowAny]  # TODO: Change to IsAuthenticated
 
     def get(self, request):
-        bills = Bill.objects.select_related('id_booking').order_by('-id_bill')
+        bills = Bill.objects.select_related('id_booking').order_by('-id')
 
         # Búsqueda por proveedor de servicio, estado de pago o vuelo de reserva
         search = request.query_params.get('search', None)
@@ -81,7 +81,7 @@ class GetPutDel(APIView):
 
     def get_bill(self, pk):
         try:
-            return Bill.objects.get(id_bill=pk)
+            return Bill.objects.get(pk=pk)
         except Bill.DoesNotExist:
             raise Http404
 

@@ -12,12 +12,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e_fp7lvf=*yi%ob1!hv2khaatfn&ij)@i$3%p)*ln1zci*d&d2'
-
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-change-me')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -44,6 +43,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,17 +74,22 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Definir opciones de base de datos
+db_options = {'autocommit': True}
+
+# Solo exigir SSL si NO estamos en modo DEBUG (es decir, en producción cloud)
+if not DEBUG:
+    db_options['ssl'] = True
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('DB_DB'),
-        'USER':os.getenv('DB_USER'),
-        'PASSWORD':os.getenv('DB_PASSWORD'),
-        'HOST':os.getenv('DB_SERVER'),
-        'PORT':os.getenv('DB_PORT'),
-        'OPTIONS': {
-            'autocommit': True
-        }
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_SERVER'),
+        'PORT': int(os.getenv('DB_PORT', 3306)),
+        'OPTIONS': db_options,
     }
 }
 
@@ -123,10 +128,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/assets/'
-STATICFILES_DIRS=(
-    os.path.join(BASE_DIR,'assets'),
-)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL='/uploads/'
 MEDIA_ROOT=os.path.join(BASE_DIR, 'uploads')
@@ -135,3 +138,8 @@ MEDIA_ROOT=os.path.join(BASE_DIR, 'uploads')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:5173,http://localhost:3000'
+).split(',')
