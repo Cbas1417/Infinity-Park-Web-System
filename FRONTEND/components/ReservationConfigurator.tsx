@@ -3,6 +3,27 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { apiFetch, findOrCreate } from "@/lib/api";
+
+const AIRPORT_INFO: Record<
+  string,
+  { name: string; IATA_code: string; country: string; city: string }
+> = {
+  "Schiphol – Ámsterdam": {
+    name: "Schiphol – Ámsterdam",
+    IATA_code: "AMS",
+    country: "Países Bajos",
+    city: "Ámsterdam",
+  },
+  "Eindhoven Airport": {
+    name: "Eindhoven Airport",
+    IATA_code: "EIN",
+    country: "Países Bajos",
+    city: "Eindhoven",
+  },
+};
+
+const DEFAULT_ROLE_NAME = "Cliente";
 
 export default function ReservationConfigurator() {
   const searchParams = useSearchParams();
@@ -26,6 +47,7 @@ export default function ReservationConfigurator() {
     email: "",
     phone: "",
     plate: "",
+    carMake: "",
     vehicleModel: "",
     flightNumber: "",
     notes: "",
@@ -37,6 +59,10 @@ export default function ReservationConfigurator() {
   ) => {
     setCustomerData((current) => ({ ...current, [field]: value }));
   };
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [bookingId, setBookingId] = useState<number | null>(null);
 
   const days = 
     checkin && checkout
@@ -84,7 +110,13 @@ const parkingOptions: {
   },
 ];
 
-const availableExtras = [
+const availableExtras: {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+}[] = [
   {
 
     id: "traslado",
@@ -162,6 +194,106 @@ const availableExtras = [
 
     return parkingCost + extrasCost;
   }, [parkingType, extras]);
+
+  async function handleConfirmBooking() {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const airportInfo = AIRPORT_INFO[reservation.airport] ?? {
+        name: reservation.airport || "Aeropuerto",
+        IATA_code: (reservation.airport || "N/A").slice(0, 3).toUpperCase(),
+        country: "",
+        city: "",
+      };
+
+      const airportId = await findOrCreate(
+        "/Airport/airports/",
+        "id",
+        "name",
+        airportInfo.name,
+        airportInfo
+      );
+
+      const roleId = await findOrCreate(
+        "/Role/roles/",
+        "id",
+        "name",
+        DEFAULT_ROLE_NAME,
+        { name: DEFAULT_ROLE_NAME, description: "Cliente que reserva desde la web" }
+      );
+
+      const user = await apiFetch<{ id_user: number }>("/User/users/", {
+        method: "POST",
+        body: JSON.stringify({
+          name_user: `${customerData.firstName} ${customerData.lastName}`.trim(),
+          phone: customerData.phone,
+          email: customerData.email,
+          password: crypto.randomUUID(),
+          id_role: roleId,
+          id_airport: airportId,
+        }),
+      });
+
+      const vehicle = await apiFetch<{ id: number }>("/Vehicle/vehicles/", {
+        method: "POST",
+        body: JSON.stringify({
+          plate_number: customerData.plate,
+          car_make: customerData.carMake,
+          car_model: customerData.vehicleModel,
+          car_color: "",
+          id_user: user.id_user,
+        }),
+      });
+
+      const booking = await apiFetch<{ id_booking: number }>("/Booking/booking/", {
+        method: "POST",
+        body: JSON.stringify({
+          datetime_checkin: reservation.checkin,
+          datetime_checkout: reservation.checkout,
+          associated_flight: customerData.flightNumber,
+          status_booking: "pending",
+          id_airport: airportId,
+          id_user: user.id_user,
+          id_vehicle: vehicle.id,
+        }),
+      });
+
+      for (const extraId of extras) {
+        const extra = availableExtras.find((item) => item.id === extraId);
+        if (!extra) continue;
+
+        const serviceId = await findOrCreate(
+          "/Service/services/",
+          "id_service",
+          "name_service",
+          extra.name,
+          {
+            name_service: extra.name,
+            base_price: extra.price,
+            description_service: extra.description,
+          }
+        );
+
+        await apiFetch("/Booking/booking-services/", {
+          method: "POST",
+          body: JSON.stringify({
+            id_service: serviceId,
+            id_booking: booking.id_booking,
+            aplied_price: extra.price,
+          }),
+        });
+      }
+
+      setBookingId(booking.id_booking);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "No se pudo completar la reserva"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="grid gap-8 lg:grid-cols-[350px_1fr]">
@@ -249,11 +381,27 @@ const availableExtras = [
             </button>
 
             <button
-              className="mt-3 w-full rounded-full bg-signal px-6 py-3 font-semibold text-white transition hover:bg-signal-light"
-              type="submit"
+              className="mt-3 w-full rounded-full bg-signal px-6 py-3 font-semibold text-white transition hover:bg-signal-light disabled:cursor-not-allowed disabled:opacity-60"
+              type="button"
+              onClick={handleConfirmBooking}
+              disabled={isSubmitting || bookingId !== null}
             >
-              Pagar € {total}
+              {bookingId
+                ? "Reserva confirmada ✓"
+                : isSubmitting
+                ? "Procesando..."
+                : `Pagar € ${total}`}
             </button>
+
+            {submitError && (
+              <p className="mt-3 text-sm text-red-600">{submitError}</p>
+            )}
+
+            {bookingId && (
+              <p className="mt-3 text-sm text-green-600">
+                Reserva #{bookingId} creada correctamente.
+              </p>
+            )}
           </>
         )}
       </aside>
@@ -463,6 +611,20 @@ const availableExtras = [
                   value={customerData.vehicleModel}
                   onChange={(e) =>
                     updateCustomerData("vehicleModel", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-stone-300 px-4 py-2 text-sm focus:border-signal focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-carbon">
+                  Marca del vehículo
+                </label>
+                <input
+                  type="text"
+                  value={customerData.carMake}
+                  onChange={(e) =>
+                    updateCustomerData("carMake", e.target.value)
                   }
                   className="w-full rounded-lg border border-stone-300 px-4 py-2 text-sm focus:border-signal focus:outline-none"
                 />

@@ -4,8 +4,8 @@ from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny  # TODO: Change to IsAuthenticated after implementing JWT
-from .models import Booking
-from .serializers import BookingSerializer
+from .models import Booking, BookingServices
+from .serializers import BookingSerializer, BookingServicesSerializer
 
 # Standardized JSON response
 def api_response(data=None, message=None, errors=None, http_status=200):
@@ -154,4 +154,95 @@ class GetPutDel(APIView):
         booking.delete()
         return api_response(
             message="Booking deleted successfully",
+        )
+
+
+class BookingServicesGetPost(APIView):
+    permission_classes = [AllowAny]  # TODO: Change to IsAuthenticated
+
+    def get(self, request):
+        items = BookingServices.objects.select_related('id_service', 'id_booking').order_by('-id_bookingservices')
+
+        booking_id = request.query_params.get('booking', None)
+        if booking_id:
+            items = items.filter(id_booking=booking_id)
+
+        paginated = paginate_queryset(request, items)
+        serializer = BookingServicesSerializer(
+            paginated["results"], many=True, context={'request': request}
+        )
+        return api_response(
+            data=serializer.data,
+            message="Booking services retrieved successfully",
+            http_status=status.HTTP_200_OK,
+        )
+
+    def post(self, request):
+        serializer = BookingServicesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                data=serializer.data,
+                message="Booking service created successfully",
+                http_status=status.HTTP_201_CREATED,
+            )
+        return api_response(
+            errors=serializer.errors,
+            message="Validation failed",
+            http_status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class BookingServicesGetPutDel(APIView):
+    permission_classes = [AllowAny]  # TODO: Change to IsAuthenticated
+
+    def get_booking_service(self, pk):
+        try:
+            return BookingServices.objects.get(id_bookingservices=pk)
+        except BookingServices.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        item = self.get_booking_service(pk)
+        serializer = BookingServicesSerializer(item, context={'request': request})
+        return api_response(
+            data=serializer.data,
+            message="Booking service retrieved successfully",
+        )
+
+    def put(self, request, pk):
+        item = self.get_booking_service(pk)
+        serializer = BookingServicesSerializer(item, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                data=serializer.data,
+                message="Booking service updated successfully",
+            )
+        return api_response(
+            errors=serializer.errors,
+            message="Validation failed",
+            http_status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def patch(self, request, pk):
+        item = self.get_booking_service(pk)
+        serializer = BookingServicesSerializer(item, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                data=serializer.data,
+                message="Booking service partially updated successfully",
+            )
+        return api_response(
+            errors=serializer.errors,
+            message="Validation failed",
+            http_status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def delete(self, request, pk):
+        item = self.get_booking_service(pk)
+        item.delete()
+        return api_response(
+            message="Booking service deleted successfully",
         )

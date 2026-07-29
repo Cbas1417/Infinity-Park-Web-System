@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { asLocale } from "@/lib/as-locale";
 import { getDictionary } from "@/lib/dictionaries";
 import { buildMetadata } from "@/lib/seo";
@@ -49,7 +50,9 @@ export default async function ReservationPage({
       </div>
 
       <div className="mt-14">
-        <ReservationConfigurator />
+        <Suspense fallback={null}>
+          <ReservationConfigurator />
+        </Suspense>
       </div>
     </section>
   );
