@@ -216,7 +216,7 @@ const availableExtras: {
       );
 
       const roleId = await findOrCreate(
-        "/Role/roles/",
+        "/Role/role/",
         "id",
         "name",
         DEFAULT_ROLE_NAME,
