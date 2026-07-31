@@ -36,6 +36,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  runtime: "nodejs",
-  matcher: ["/((?!_next|api|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)"],
+matcher: ["/((?!_next|api|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)"],
 };

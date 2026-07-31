@@ -6,8 +6,6 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import "@/app/globals.css";
 
-
-
 export function generateStaticParams() {
   return i18n.locales.map((lang) => ({ lang }));
 }
@@ -17,19 +15,20 @@ export default async function LangLayout({
   params,
 }: {
   children: ReactNode;
-  params: Promise<{ lang: string }>;
-})
- {
-  const { lang: rawLang } = await params;
-  const lang = asLocale(rawLang);
+  params: { lang: string };
+}) {
+  const lang = asLocale(params.lang);
   const dict = await getDictionary(lang);
 
   return (
-  
     <html lang={lang}>
       <body className="flex min-h-screen flex-col bg-paper text-carbon">
         <Header lang={lang} dict={dict} />
-        <main className="flex-grow">{children}</main>
+
+        <main className="flex-grow">
+          {children}
+        </main>
+
         <Footer lang={lang} dict={dict} />
       </body>
     </html>
