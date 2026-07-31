@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { i18n, localeHreflang, type Locale } from "./i18n-config";
 
 // TODO: reemplazar por el dominio real de Infinity Park cuando esté definido.
-export const siteUrl = "https://infinitypark.nl"; 
+export const siteUrl = "https://infinitypark.eu"; 
 
 export function buildAlternates(path: string) {
   const languages: Record<string, string> = {};
