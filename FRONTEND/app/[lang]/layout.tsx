@@ -15,20 +15,18 @@ export default async function LangLayout({
   params,
 }: {
   children: ReactNode;
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }) {
-  const lang = asLocale(params.lang);
+  const { lang: rawLang } = await params;
+
+  const lang = asLocale(rawLang);
   const dict = await getDictionary(lang);
 
   return (
     <html lang={lang}>
       <body className="flex min-h-screen flex-col bg-paper text-carbon">
         <Header lang={lang} dict={dict} />
-
-        <main className="flex-grow">
-          {children}
-        </main>
-
+        <main className="flex-grow">{children}</main>
         <Footer lang={lang} dict={dict} />
       </body>
     </html>
